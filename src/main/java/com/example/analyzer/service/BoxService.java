@@ -12,7 +12,7 @@ import java.util.List;
 public class BoxService {
     public static final int BOX_HEADER_LENGTH = 4;
 
-    public List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) {
+    public List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) throws IllegalArgumentException {
         List<Box> boxes = new ArrayList<>();
         int end = offset + length;
         while (offset < end) {

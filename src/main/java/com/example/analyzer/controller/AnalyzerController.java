@@ -27,6 +27,10 @@ public class AnalyzerController {
 
     @GetMapping("/analyze")
     public Mono<ResponseEntity<String>> analyzeFile(@RequestParam(value = "url", defaultValue = DEFAULT_URL) String url) {
+        if (!isValidUrl(url)) {
+            return Mono.just(ResponseEntity.badRequest().body("Invalid URL"));
+        }
+
         HttpClient client = HttpClient.create();
         return client.get()
                 .uri(url)
@@ -35,8 +39,13 @@ public class AnalyzerController {
                 .asByteArray()
                 .flatMap(s -> {
                     ByteBuffer byteBuffer = ByteBuffer.wrap(s);
-                    List<Box> boxes = boxService.processBox(byteBuffer, 0, s.length);
-                    return Mono.just(boxes);
+
+                    try {
+                        List<Box> boxes = boxService.processBox(byteBuffer, 0, s.length);
+                        return Mono.just(boxes);
+                    } catch (IllegalArgumentException e) {
+                        return Mono.error(e);
+                    }
                 })
                 .map(boxes -> {
                     try {
@@ -47,6 +56,19 @@ public class AnalyzerController {
                     } catch (JsonProcessingException e) {
                         return ResponseEntity.badRequest().body(e.getMessage());
                     }
+                })
+                .onErrorResume(e -> {
+                    if (e instanceof IllegalArgumentException) {
+                        return Mono.just(ResponseEntity.badRequest().body("Invalid File Format"));
+                    } else {
+                        return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));
+                    }
                 });
     }
+
+    private boolean isValidUrl(String url) {
+        String regex = "^https?://.+\\.mp4$";
+        return url.matches(regex);
+    }
+
 }
