@@ -9,17 +9,17 @@ import java.util.List;
 
 @Service
 public class BoxService {
-    public static final int BYTE_LENGTH = 4;
+    public static final int BOX_HEADER_LENGTH = 4;
 
     public List<Box> analyze(ByteBuffer byteBuffer, int offset, int length) {
         List<Box> boxes = new ArrayList<>();
         int end = offset + length;
         while (offset < end) {
             int boxSize = byteBuffer.getInt(offset);
-            String boxType = new String(byteBuffer.array(), offset + BYTE_LENGTH, BYTE_LENGTH);
+            String boxType = new String(byteBuffer.array(), offset + BOX_HEADER_LENGTH, BOX_HEADER_LENGTH);
             Box box = new Box(boxSize, boxType);
             if (boxType.equals("moof") || boxType.equals("moov") || boxType.equals("traf") || boxType.equals("trak")) {
-                List<Box> subBoxes = analyze(byteBuffer, offset + BYTE_LENGTH * 2, boxSize - BYTE_LENGTH * 2);
+                List<Box> subBoxes = analyze(byteBuffer, offset + BOX_HEADER_LENGTH * 2, boxSize - BOX_HEADER_LENGTH * 2);
                 subBoxes.forEach(box::addSubBox);
             }
             boxes.add(box);
