@@ -4,6 +4,7 @@ import com.example.analyzer.model.Box;
 import com.example.analyzer.service.BoxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,20 +33,20 @@ public class AnalyzerController {
                 .responseContent()
                 .aggregate()
                 .asByteArray()
-                .map(s -> {
+                .flatMap(s -> {
                     ByteBuffer byteBuffer = ByteBuffer.wrap(s);
                     List<Box> boxes = boxService.analyze(byteBuffer, 0, s.length);
-                    String json;
-                    try {
-                        json = objectMapper.writeValueAsString(boxes);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return json;
+                    return Mono.just(boxes);
                 })
-                .map(json -> ResponseEntity.ok()
-                        .header("Content-Type", "application/json")
-                        .body(json))
-                .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().body(error.getMessage())));
+                .map(boxes -> {
+                    try {
+                        String json = objectMapper.writeValueAsString(boxes);
+                        return ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(json);
+                    } catch (JsonProcessingException e) {
+                        return ResponseEntity.badRequest().body(e.getMessage());
+                    }
+                });
     }
 }
