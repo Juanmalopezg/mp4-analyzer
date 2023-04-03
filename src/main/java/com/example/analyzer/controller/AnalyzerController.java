@@ -17,12 +17,15 @@ import java.util.List;
 
 @RestController
 public class AnalyzerController {
-    public static final String DEFAULT_URL = "https://demo.castlabs.com/tmp/text0.mp4";
+    private static final String DEFAULT_URL = "https://demo.castlabs.com/tmp/text0.mp4";
+    private static final String URL_REGEX = "^https?://.+\\.mp4$";
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final BoxService boxService;
+    private final HttpClient httpClient;
 
     public AnalyzerController(BoxService boxService) {
         this.boxService = boxService;
+        this.httpClient = HttpClient.create();
     }
 
     @GetMapping("/analyze")
@@ -31,22 +34,8 @@ public class AnalyzerController {
             return Mono.just(ResponseEntity.badRequest().body("Invalid URL"));
         }
 
-        HttpClient client = HttpClient.create();
-        return client.get()
-                .uri(url)
-                .responseContent()
-                .aggregate()
-                .asByteArray()
-                .flatMap(s -> {
-                    ByteBuffer byteBuffer = ByteBuffer.wrap(s);
-
-                    try {
-                        List<Box> boxes = boxService.processBox(byteBuffer, 0, s.length);
-                        return Mono.just(boxes);
-                    } catch (IllegalArgumentException e) {
-                        return Mono.error(e);
-                    }
-                })
+        return fetchVideoData(url)
+                .flatMap(this::processBoxes)
                 .map(boxes -> {
                     try {
                         String json = objectMapper.writeValueAsString(boxes);
@@ -67,8 +56,25 @@ public class AnalyzerController {
     }
 
     private boolean isValidUrl(String url) {
-        String regex = "^https?://.+\\.mp4$";
-        return url.matches(regex);
+        return url.matches(URL_REGEX);
     }
 
+    private Mono<byte[]> fetchVideoData(String url) {
+        return httpClient.get()
+                .uri(url)
+                .responseContent()
+                .aggregate()
+                .asByteArray();
+    }
+
+    private Mono<List<Box>> processBoxes(byte[] data) {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+
+        try {
+            List<Box> boxes = boxService.processBox(byteBuffer, 0, data.length);
+            return Mono.just(boxes);
+        } catch (IllegalArgumentException e) {
+            return Mono.error(e);
+        }
+    }
 }
