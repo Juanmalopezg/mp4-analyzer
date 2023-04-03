@@ -5,12 +5,12 @@ import java.util.List;
 
 public class Box {
     private final int size;
-    private final String type;
+    private final BoxType type;
     private final List<Box> subBoxes;
 
     public Box(int size, String type) {
         this.size = size;
-        this.type = type;
+        this.type = BoxType.valueOf(type.toUpperCase());
         this.subBoxes = new ArrayList<>();
     }
 
@@ -18,7 +18,7 @@ public class Box {
         return size;
     }
 
-    public String getType() {
+    public BoxType getType() {
         return type;
     }
 
