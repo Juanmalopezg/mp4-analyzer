@@ -26,7 +26,7 @@ public class AnalyzerController {
     }
 
     @GetMapping("/analyze")
-    public Mono<ResponseEntity<String>> analyze(@RequestParam(value = "url", defaultValue = DEFAULT_URL) String url) {
+    public Mono<ResponseEntity<String>> analyzeFile(@RequestParam(value = "url", defaultValue = DEFAULT_URL) String url) {
         HttpClient client = HttpClient.create();
         return client.get()
                 .uri(url)
@@ -35,7 +35,7 @@ public class AnalyzerController {
                 .asByteArray()
                 .flatMap(s -> {
                     ByteBuffer byteBuffer = ByteBuffer.wrap(s);
-                    List<Box> boxes = boxService.analyze(byteBuffer, 0, s.length);
+                    List<Box> boxes = boxService.processBox(byteBuffer, 0, s.length);
                     return Mono.just(boxes);
                 })
                 .map(boxes -> {
