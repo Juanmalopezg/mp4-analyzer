@@ -11,35 +11,35 @@ http://localhost:8080/analyze?url=https://demo.castlabs.com/tmp/text0.mp4
 [
     {
         "size": 181,
-        "type": "moof",
+        "type": "MOOF",
         "subBoxes": [
             {
                 "size": 16,
-                "type": "mfhd",
+                "type": "MFHD",
                 "subBoxes": []
             },
             {
                 "size": 157,
-                "type": "traf",
+                "type": "TRAF",
                 "subBoxes": [
                     {
                         "size": 24,
-                        "type": "tfhd",
+                        "type": "TFHD",
                         "subBoxes": []
                     },
                     {
                         "size": 20,
-                        "type": "trun",
+                        "type": "TRUN",
                         "subBoxes": []
                     },
                     {
                         "size": 44,
-                        "type": "uuid",
+                        "type": "UUID",
                         "subBoxes": []
                     },
                     {
                         "size": 61,
-                        "type": "uuid",
+                        "type": "UUID",
                         "subBoxes": []
                     }
                 ]
@@ -48,7 +48,7 @@ http://localhost:8080/analyze?url=https://demo.castlabs.com/tmp/text0.mp4
     },
     {
         "size": 17908,
-        "type": "mdat",
+        "type": "MDAT",
         "subBoxes": []
     }
 ]
