@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Test with Maven
-        run: mvn clean test
+        run: mvn -B clean test
 
       - name: Generate JaCoCo Badge
         #      if: ${{ github.ref == 'refs/heads/master' }}
