@@ -35,8 +35,8 @@ jobs:
         #      if: ${{ github.ref == 'refs/heads/master' }}
         uses: cicirello/jacoco-badge-generator@v2
         with:
-        jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
-        badges-directory: build/reports/jacoco/test/html/badges
+          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+          badges-directory: build/reports/jacoco/test/html/badges
 
       - name: Publish coverage report to GitHub Pages
         #      if: ${{ github.ref == 'refs/heads/master' }}
