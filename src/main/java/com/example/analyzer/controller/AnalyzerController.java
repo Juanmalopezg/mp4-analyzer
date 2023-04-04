@@ -19,7 +19,7 @@ import java.util.List;
 public class AnalyzerController {
     private static final String DEFAULT_URL = "https://demo.castlabs.com/tmp/text0.mp4";
     private static final String URL_REGEX = "^https?://.+\\.mp4$";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     private final BoxService boxService;
     private final HttpClient httpClient;
 
