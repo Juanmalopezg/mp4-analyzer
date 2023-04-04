@@ -106,7 +106,7 @@ docker build -t mp4-analyzer .
 docker run --name mp4-analyzer -d -p 8080:8080 mp4-analyzer
 ```
 
-The application should now be running on **http://localhost:3000**.
+The application should now be running on **http://localhost:8080**.
 
 ### Running the Application
 
