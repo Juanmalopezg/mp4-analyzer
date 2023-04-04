@@ -29,17 +29,17 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Test with Maven
-        run: mvn -B clean test
+        run: mvn clean test
 
       - name: Generate JaCoCo Badge
         #      if: ${{ github.ref == 'refs/heads/master' }}
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
-          badges-directory: build/reports/jacoco/test/html/badges
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
+          badges-directory: target/site/jacoco/badges
 
       - name: Publish coverage report to GitHub Pages
         #      if: ${{ github.ref == 'refs/heads/master' }}
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build/reports/jacoco/test/html
+          folder: target/site/jacoco
