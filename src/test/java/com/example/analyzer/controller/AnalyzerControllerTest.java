@@ -1,15 +1,14 @@
 package com.example.analyzer.controller;
 
 import com.example.analyzer.service.BoxService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnalyzerControllerTest {
-
     @Test
     public void analyzeFile_shouldReturnCorrectJsonResponse() {
         AnalyzerController analyzerController = new AnalyzerController(new BoxService());
@@ -50,6 +49,4 @@ public class AnalyzerControllerTest {
         assertEquals(expectedResponse.getHeaders(), actualResponse.block().getHeaders());
         assertEquals(expectedResponse.getBody(), actualResponse.block().getBody());
     }
-
-
 }

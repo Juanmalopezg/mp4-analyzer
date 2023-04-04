@@ -3,10 +3,13 @@
 This project analyzes MPEG-4 Part 12 files and returns a JSON representation of the file structure.
 
 **Request**
+
 ```
 http://localhost:8080/analyze?url=https://demo.castlabs.com/tmp/text0.mp4
 ```
+
 **Response**
+
 ```
 [
     {
@@ -53,10 +56,13 @@ http://localhost:8080/analyze?url=https://demo.castlabs.com/tmp/text0.mp4
     }
 ]
 ```
+
 ### Getting Started
-These instructions will help you get a copy of the project up and running on your local machine for development and testing purposes.
+
+To get started with this project, follow the instructions below to set up your development environment:
 
 ### Prerequisites
+
 Before you begin, make sure you have the following software installed on your machine:
 
 - Java 11 or later
@@ -65,25 +71,46 @@ Before you begin, make sure you have the following software installed on your ma
 ### Installing
 
 1 - Clone the repository:
+
 ```
 git clone https://github.com/Juanmalopezg/mp4-analyzer.git
 ```
 
 2 - Navigate to the project directory:
+
 ```
 cd mp4-analyzer
 ```
 
 3 - Build the project:
+
 ```
 mvn clean package
 ```
 
+### Docker
+
+Alternatively, you can run the application in a Docker container.
+
+1. Build the Docker image:
+```
+docker build -t mp4-analyzer .
+```
+
+2. Run the Docker container:
+```
+docker run --name mp4-analyzer -d -p 8080:8080 mp4-analyzer
+```
+
+The application should now be running on **http://localhost:3000**.
+
 ### Running the Application
 
-2 - Open your web browser and navigate to `http://localhost:8080/analyze?url=<url>` where `<url>` is the URL of the MPEG-4 Part 12 file you want to analyze. 
+2 - Open your web browser and navigate to `http://localhost:8080/analyze?url=<url>` where `<url>` is the URL of the
+MPEG-4 Part 12 file you want to analyze.
 
 ### Built With
+
 - **Spring Boot** - The web framework used
 - **Reactor** - The reactive programming library used
 - **Jackson** - The JSON parsing library used
