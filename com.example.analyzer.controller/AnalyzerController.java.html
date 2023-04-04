@@ -19,7 +19,7 @@ import java.util.List;
 public class AnalyzerController {
     private static final String DEFAULT_URL = &quot;https://demo.castlabs.com/tmp/text0.mp4&quot;;
     private static final String URL_REGEX = &quot;^https?://.+\\.mp4$&quot;;
-<span class="fc" id="L22">    private final ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L22">    ObjectMapper objectMapper = new ObjectMapper();</span>
     private final BoxService boxService;
     private final HttpClient httpClient;
 
@@ -42,15 +42,15 @@ public class AnalyzerController {
 <span class="fc" id="L42">                        return ResponseEntity.ok()</span>
 <span class="fc" id="L43">                                .contentType(MediaType.APPLICATION_JSON)</span>
 <span class="fc" id="L44">                                .body(json);</span>
-<span class="nc" id="L45">                    } catch (JsonProcessingException e) {</span>
-<span class="nc" id="L46">                        return ResponseEntity.badRequest().body(e.getMessage());</span>
+<span class="fc" id="L45">                    } catch (JsonProcessingException e) {</span>
+<span class="fc" id="L46">                        return ResponseEntity.badRequest().body(e.getMessage());</span>
                     }
                 })
 <span class="fc" id="L49">                .onErrorResume(e -&gt; {</span>
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                    if (e instanceof IllegalArgumentException) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">                    if (e instanceof IllegalArgumentException) {</span>
 <span class="fc" id="L51">                        return Mono.just(ResponseEntity.badRequest().body(&quot;Invalid File Format&quot;));</span>
                     } else {
-<span class="nc" id="L53">                        return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));</span>
+<span class="fc" id="L53">                        return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));</span>
                     }
                 });
     }
