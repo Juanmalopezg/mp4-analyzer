@@ -14,7 +14,7 @@
     <name>mp4-analyzer</name>
     <description>mp4-analyzer</description>
     <properties>
-        <java.version>20</java.version>
+        <java.version>11</java.version>
     </properties>
     <dependencies>
         <dependency>
