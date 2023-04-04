@@ -67,7 +67,7 @@ To get started with this project, follow the instructions below to set up your d
 
 Before you begin, make sure you have the following software installed on your machine:
 
-- Java 11 or later
+- Java 17 or later
 - Maven
 
 ### Installing
