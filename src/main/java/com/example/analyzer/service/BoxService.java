@@ -12,6 +12,16 @@ import java.util.List;
 public class BoxService {
     public static final int BOX_HEADER_LENGTH = 4;
 
+    /**
+     * Processes the boxes in the given byte buffer starting from the specified offset and up to the given length.
+     * Returns a list of boxes with their sub-boxes, if any.
+     *
+     * @param byteBuffer the byte buffer containing the boxes to process
+     * @param offset     the starting offset of the boxes to process
+     * @param length     the length of the boxes to process
+     * @return a list of boxes with their sub-boxes, if any
+     * @throws IllegalArgumentException if the byte buffer is null or if the offset and length exceed the buffer limits
+     */
     public List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) throws IllegalArgumentException {
         List<Box> boxes = new ArrayList<>();
         int end = offset + length;
