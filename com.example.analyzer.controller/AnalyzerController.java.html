@@ -4,6 +4,7 @@ import com.example.analyzer.model.Box;
 import com.example.analyzer.service.BoxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,63 +20,54 @@ import java.util.List;
 public class AnalyzerController {
     private static final String DEFAULT_URL = &quot;https://demo.castlabs.com/tmp/text0.mp4&quot;;
     private static final String URL_REGEX = &quot;^https?://.+\\.mp4$&quot;;
-<span class="fc" id="L22">    ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L23">    ObjectMapper objectMapper = new ObjectMapper();</span>
     private final BoxService boxService;
     private final HttpClient httpClient;
 
-<span class="fc" id="L26">    public AnalyzerController(BoxService boxService) {</span>
-<span class="fc" id="L27">        this.boxService = boxService;</span>
-<span class="fc" id="L28">        this.httpClient = HttpClient.create();</span>
-<span class="fc" id="L29">    }</span>
+<span class="fc" id="L27">    public AnalyzerController(BoxService boxService) {</span>
+<span class="fc" id="L28">        this.boxService = boxService;</span>
+<span class="fc" id="L29">        this.httpClient = HttpClient.create();</span>
+<span class="fc" id="L30">    }</span>
 
     @GetMapping(&quot;/analyze&quot;)
     public Mono&lt;ResponseEntity&lt;String&gt;&gt; analyzeFile(@RequestParam(value = &quot;url&quot;, defaultValue = DEFAULT_URL) String url) {
-<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (!isValidUrl(url)) {</span>
-<span class="fc" id="L34">            return Mono.just(ResponseEntity.badRequest().body(&quot;Invalid URL&quot;));</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (!isValidUrl(url)) {</span>
+<span class="fc" id="L35">            return Mono.just(ResponseEntity.badRequest().body(&quot;Invalid URL&quot;));</span>
         }
 
-<span class="fc" id="L37">        return fetchVideoData(url)</span>
-<span class="fc" id="L38">                .flatMap(this::processBoxes)</span>
-<span class="fc" id="L39">                .map(boxes -&gt; {</span>
-                    try {
-<span class="fc" id="L41">                        String json = objectMapper.writeValueAsString(boxes);</span>
-<span class="fc" id="L42">                        return ResponseEntity.ok()</span>
-<span class="fc" id="L43">                                .contentType(MediaType.APPLICATION_JSON)</span>
-<span class="fc" id="L44">                                .body(json);</span>
-<span class="fc" id="L45">                    } catch (JsonProcessingException e) {</span>
-<span class="fc" id="L46">                        return ResponseEntity.badRequest().body(e.getMessage());</span>
-                    }
-                })
-<span class="fc" id="L49">                .onErrorResume(e -&gt; {</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">                    if (e instanceof IllegalArgumentException) {</span>
-<span class="fc" id="L51">                        return Mono.just(ResponseEntity.badRequest().body(&quot;Invalid File Format&quot;));</span>
-                    } else {
-<span class="fc" id="L53">                        return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));</span>
-                    }
-                });
+<span class="fc" id="L38">        return fetchVideoData(url)</span>
+<span class="fc" id="L39">                .flatMap(this::getBoxes)</span>
+<span class="fc" id="L40">                .map(this::createJsonResponse);</span>
+    }
+
+    ResponseEntity&lt;String&gt; createJsonResponse(List&lt;Box&gt; boxes) {
+        try {
+<span class="fc" id="L45">            String json = objectMapper.writeValueAsString(boxes);</span>
+<span class="fc" id="L46">            return ResponseEntity.ok()</span>
+<span class="fc" id="L47">                    .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L48">                    .body(json);</span>
+<span class="fc" id="L49">        } catch (JsonProcessingException e) {</span>
+<span class="fc" id="L50">            throw new RuntimeJsonMappingException(e.getMessage());</span>
+        }
     }
 
     private boolean isValidUrl(String url) {
-<span class="fc" id="L59">        return url.matches(URL_REGEX);</span>
+<span class="fc" id="L55">        return url.matches(URL_REGEX);</span>
     }
 
-    private Mono&lt;byte[]&gt; fetchVideoData(String url) {
-<span class="fc" id="L63">        return httpClient.get()</span>
-<span class="fc" id="L64">                .uri(url)</span>
-<span class="fc" id="L65">                .responseContent()</span>
-<span class="fc" id="L66">                .aggregate()</span>
-<span class="fc" id="L67">                .asByteArray();</span>
+    Mono&lt;byte[]&gt; fetchVideoData(String url) {
+<span class="fc" id="L59">        return httpClient.get()</span>
+<span class="fc" id="L60">                .uri(url)</span>
+<span class="fc" id="L61">                .responseContent()</span>
+<span class="fc" id="L62">                .aggregate()</span>
+<span class="fc" id="L63">                .asByteArray();</span>
     }
 
-    private Mono&lt;List&lt;Box&gt;&gt; processBoxes(byte[] data) {
-<span class="fc" id="L71">        ByteBuffer byteBuffer = ByteBuffer.wrap(data);</span>
+    Mono&lt;List&lt;Box&gt;&gt; getBoxes(byte[] data) {
+<span class="fc" id="L67">        ByteBuffer byteBuffer = ByteBuffer.wrap(data);</span>
 
-        try {
-<span class="fc" id="L74">            List&lt;Box&gt; boxes = boxService.processBox(byteBuffer, 0, data.length);</span>
-<span class="fc" id="L75">            return Mono.just(boxes);</span>
-<span class="fc" id="L76">        } catch (IllegalArgumentException e) {</span>
-<span class="fc" id="L77">            return Mono.error(e);</span>
-        }
+<span class="fc" id="L69">        List&lt;Box&gt; boxes = boxService.processBox(byteBuffer, 0, data.length);</span>
+<span class="fc" id="L70">        return Mono.just(boxes);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

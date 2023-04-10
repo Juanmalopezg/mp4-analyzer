@@ -12,21 +12,31 @@ import java.util.List;
 <span class="fc" id="L12">public class BoxService {</span>
     public static final int BOX_HEADER_LENGTH = 4;
 
+    /**
+     * Processes the boxes in the given byte buffer starting from the specified offset and up to the given length.
+     * Returns a list of boxes with their sub-boxes, if any.
+     *
+     * @param byteBuffer the byte buffer containing the boxes to process
+     * @param offset     the starting offset of the boxes to process
+     * @param length     the length of the boxes to process
+     * @return a list of boxes with their sub-boxes, if any
+     * @throws IllegalArgumentException if the byte buffer is null or if the offset and length exceed the buffer limits
+     */
     public List&lt;Box&gt; processBox(ByteBuffer byteBuffer, int offset, int length) throws IllegalArgumentException {
-<span class="fc" id="L16">        List&lt;Box&gt; boxes = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L17">        int end = offset + length;</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">        while (offset &lt; end) {</span>
-<span class="fc" id="L19">            int boxSize = byteBuffer.getInt(offset);</span>
-<span class="fc" id="L20">            String boxType = new String(byteBuffer.array(), offset + BOX_HEADER_LENGTH, BOX_HEADER_LENGTH);</span>
-<span class="fc" id="L21">            Box box = new Box(boxSize, boxType);</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">            if (BoxType.NESTED_BOX_TYPES.get(boxType) != null) {</span>
-<span class="fc" id="L23">                List&lt;Box&gt; subBoxes = processBox(byteBuffer, offset + BOX_HEADER_LENGTH * 2, boxSize - BOX_HEADER_LENGTH * 2);</span>
-<span class="fc" id="L24">                subBoxes.forEach(box::addSubBox);</span>
+<span class="fc" id="L26">        List&lt;Box&gt; boxes = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L27">        int end = offset + length;</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        while (offset &lt; end) {</span>
+<span class="fc" id="L29">            int boxSize = byteBuffer.getInt(offset);</span>
+<span class="fc" id="L30">            String boxType = new String(byteBuffer.array(), offset + BOX_HEADER_LENGTH, BOX_HEADER_LENGTH);</span>
+<span class="fc" id="L31">            Box box = new Box(boxSize, boxType);</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            if (BoxType.NESTED_BOX_TYPES.get(boxType) != null) {</span>
+<span class="fc" id="L33">                List&lt;Box&gt; subBoxes = processBox(byteBuffer, offset + BOX_HEADER_LENGTH * 2, boxSize - BOX_HEADER_LENGTH * 2);</span>
+<span class="fc" id="L34">                subBoxes.forEach(box::addSubBox);</span>
             }
-<span class="fc" id="L26">            boxes.add(box);</span>
-<span class="fc" id="L27">            offset += boxSize;</span>
-<span class="fc" id="L28">        }</span>
-<span class="fc" id="L29">        return boxes;</span>
+<span class="fc" id="L36">            boxes.add(box);</span>
+<span class="fc" id="L37">            offset += boxSize;</span>
+<span class="fc" id="L38">        }</span>
+<span class="fc" id="L39">        return boxes;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
