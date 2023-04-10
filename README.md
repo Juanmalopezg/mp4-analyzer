@@ -4,6 +4,7 @@
 # MPEG-4 Part 12 Analyzer
 
 This project analyzes MPEG-4 Part 12 files and returns a JSON representation of the file structure.
+
 **Request**
 
 ```
