@@ -4,6 +4,7 @@ import com.example.analyzer.model.Box;
 import com.example.analyzer.service.BoxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,31 +36,26 @@ public class AnalyzerController {
         }
 
         return fetchVideoData(url)
-                .flatMap(this::processBoxes)
-                .map(boxes -> {
-                    try {
-                        String json = objectMapper.writeValueAsString(boxes);
-                        return ResponseEntity.ok()
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(json);
-                    } catch (JsonProcessingException e) {
-                        return ResponseEntity.badRequest().body(e.getMessage());
-                    }
-                })
-                .onErrorResume(e -> {
-                    if (e instanceof IllegalArgumentException) {
-                        return Mono.just(ResponseEntity.badRequest().body("Invalid File Format"));
-                    } else {
-                        return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));
-                    }
-                });
+                .flatMap(this::getBoxes)
+                .map(this::createJsonResponse);
+    }
+
+    ResponseEntity<String> createJsonResponse(List<Box> boxes) {
+        try {
+            String json = objectMapper.writeValueAsString(boxes);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeJsonMappingException(e.getMessage());
+        }
     }
 
     private boolean isValidUrl(String url) {
         return url.matches(URL_REGEX);
     }
 
-    private Mono<byte[]> fetchVideoData(String url) {
+    Mono<byte[]> fetchVideoData(String url) {
         return httpClient.get()
                 .uri(url)
                 .responseContent()
@@ -67,14 +63,10 @@ public class AnalyzerController {
                 .asByteArray();
     }
 
-    private Mono<List<Box>> processBoxes(byte[] data) {
+    Mono<List<Box>> getBoxes(byte[] data) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
 
-        try {
-            List<Box> boxes = boxService.processBox(byteBuffer, 0, data.length);
-            return Mono.just(boxes);
-        } catch (IllegalArgumentException e) {
-            return Mono.error(e);
-        }
+        List<Box> boxes = boxService.processBox(byteBuffer, 0, data.length);
+        return Mono.just(boxes);
     }
 }
