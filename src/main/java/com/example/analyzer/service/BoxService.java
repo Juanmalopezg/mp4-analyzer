@@ -1,5 +1,6 @@
 package com.example.analyzer.service;
 
+import com.example.analyzer.exception.InvalidFileFormatException;
 import com.example.analyzer.model.Box;
 import com.example.analyzer.model.BoxType;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,34 @@ public class BoxService {
      * @param offset     the starting offset of the boxes to process
      * @param length     the length of the boxes to process
      * @return a list of boxes with their sub-boxes, if any
-     * @throws IllegalArgumentException if the byte buffer is null or if the offset and length exceed the buffer limits
+     * @throws InvalidFileFormatException if the file is not compatible with ISO MPEG-4 Part 12 Base Media File Format
+     *                                    or the byte buffer is null or if the offset and length exceed the buffer limits
      */
-    public List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) throws IllegalArgumentException {
+    public List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) {
         List<Box> boxes = new ArrayList<>();
         int end = offset + length;
         while (offset < end) {
             int boxSize = byteBuffer.getInt(offset);
             String boxType = new String(byteBuffer.array(), offset + BOX_HEADER_LENGTH, BOX_HEADER_LENGTH);
-            Box box = new Box(boxSize, boxType);
+            Box box = getBox(boxSize, boxType);
             if (BoxType.NESTED_BOX_TYPES.get(boxType) != null) {
                 List<Box> subBoxes = processBox(byteBuffer, offset + BOX_HEADER_LENGTH * 2, boxSize - BOX_HEADER_LENGTH * 2);
                 subBoxes.forEach(box::addSubBox);
             }
             boxes.add(box);
             offset += boxSize;
+
         }
         return boxes;
+    }
+
+    private Box getBox(int boxSize, String boxType) {
+        Box box;
+        try {
+            box = new Box(boxSize, boxType);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidFileFormatException(e);
+        }
+        return box;
     }
 }

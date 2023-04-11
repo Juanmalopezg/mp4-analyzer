@@ -36,7 +36,7 @@ public class AnalyzerController {
         }
 
         return fetchVideoData(url)
-                .flatMap(this::getBoxes)
+                .flatMap(this::processBoxes)
                 .map(this::createJsonResponse);
     }
 
@@ -63,7 +63,7 @@ public class AnalyzerController {
                 .asByteArray();
     }
 
-    Mono<List<Box>> getBoxes(byte[] data) {
+    Mono<List<Box>> processBoxes(byte[] data) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
 
         List<Box> boxes = boxService.processBox(byteBuffer, 0, data.length);
