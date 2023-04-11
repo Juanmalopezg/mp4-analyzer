@@ -2,6 +2,7 @@ GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_
 mp4-analyzer,com.example.analyzer.model,Box,0,31,0,0,0,10,0,5,0,5
 mp4-analyzer,com.example.analyzer.model,BoxType,0,123,0,0,0,23,0,1,0,1
 mp4-analyzer,com.example.analyzer,AnalyzerApplication,0,8,0,0,0,3,0,2,0,2
-mp4-analyzer,com.example.analyzer.service,BoxService,0,66,0,4,0,14,0,4,0,2
+mp4-analyzer,com.example.analyzer.service,BoxService,0,80,0,4,0,19,0,5,0,3
 mp4-analyzer,com.example.analyzer.controller,AnalyzerController,0,79,0,2,0,25,0,7,0,6
-mp4-analyzer,com.example.analyzer.exception,AnalyzerExceptionHandler,0,12,0,0,0,3,0,3,0,3
+mp4-analyzer,com.example.analyzer.exception,InvalidFileFormatException,0,5,0,0,0,2,0,1,0,1
+mp4-analyzer,com.example.analyzer.exception,AnalyzerExceptionHandler,0,13,0,0,0,3,0,3,0,3

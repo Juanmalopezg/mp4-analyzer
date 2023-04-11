@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 <span class="fc" id="L9">public class AnalyzerExceptionHandler {</span>
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity&lt;String&gt; handleIllegalArgumentException(IllegalArgumentException e) {
-<span class="fc" id="L13">        return ResponseEntity.badRequest().body(&quot;Invalid File Format&quot;);</span>
+    @ExceptionHandler(InvalidFileFormatException.class)
+    public ResponseEntity&lt;String&gt; handleInvalidFileFormatException(InvalidFileFormatException e) {
+<span class="fc" id="L13">        return ResponseEntity.badRequest().body(e.getMessage());</span>
     }
 
     @ExceptionHandler(RuntimeJsonMappingException.class)
-    public ResponseEntity&lt;String&gt; handleException(RuntimeJsonMappingException e) {
+    public ResponseEntity&lt;String&gt; handleJsonMappingException(RuntimeJsonMappingException e) {
 <span class="fc" id="L18">        return ResponseEntity.badRequest().body(e.getMessage());</span>
     }
 }
