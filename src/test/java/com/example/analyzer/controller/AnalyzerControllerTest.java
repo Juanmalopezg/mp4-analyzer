@@ -1,5 +1,6 @@
 package com.example.analyzer.controller;
 
+import com.example.analyzer.exception.InvalidFileFormatException;
 import com.example.analyzer.service.BoxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,13 +44,13 @@ public class AnalyzerControllerTest {
     }
 
     @Test
-    public void analyzeFile_shouldThrowIllegalArgumentException_onInvalidFileFormat() {
+    public void analyzeFile_shouldThrowInvalidFileFormatExceptionException_onInvalidFileFormat() {
         AnalyzerController analyzerController = new AnalyzerController(new BoxService());
         String url = "http://demo.castlabs.com/tmp/text0.mp4";
 
         Mono<ResponseEntity<String>> actualResponse = analyzerController.analyzeFile(url);
 
-        assertThrows(IllegalArgumentException.class, actualResponse::block);
+        assertThrows(InvalidFileFormatException.class, actualResponse::block);
     }
 
     @Test
