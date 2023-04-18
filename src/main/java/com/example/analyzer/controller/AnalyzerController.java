@@ -5,6 +5,7 @@ import com.example.analyzer.service.BoxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,15 +59,18 @@ public class AnalyzerController {
     Mono<byte[]> fetchVideoData(String url) {
         return httpClient.get()
                 .uri(url)
-                .responseContent()
-                .aggregate()
-                .asByteArray();
+                .responseSingle((resp, bytes) -> {
+                    if (!resp.status().equals(HttpResponseStatus.OK)){
+                        // Handle here what to do if we get a 300, 301, or any other applicable HTTP response code.
+                    }
+                    return bytes.asByteArray();
+                });
     }
 
     Mono<List<Box>> processBoxes(byte[] data) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
 
-        List<Box> boxes = boxService.processBox(byteBuffer, 0, data.length);
+        List<Box> boxes = boxService.processBoxes(byteBuffer, data.length);
         return Mono.just(boxes);
     }
 }

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnalyzerControllerTest {
     @Test
-    public void analyzeFile_shouldReturnCorrectJsonResponse() {
+    void analyzeFile_shouldReturnCorrectJsonResponse() {
         AnalyzerController analyzerController = new AnalyzerController(new BoxService());
         String url = "https://demo.castlabs.com/tmp/text0.mp4";
         ResponseEntity<String> expectedResponse = ResponseEntity.ok()
@@ -31,7 +31,7 @@ public class AnalyzerControllerTest {
     }
 
     @Test
-    public void analyzeFile_shouldReturnBadRequestResponse_whenUrlIsIncorrect() {
+    void analyzeFile_shouldReturnBadRequestResponse_whenUrlIsIncorrect() {
         AnalyzerController analyzerController = new AnalyzerController(new BoxService());
         String url = "htp:/wrong-url";
         ResponseEntity<String> expectedResponse = ResponseEntity.badRequest().body("Invalid URL");
@@ -44,7 +44,7 @@ public class AnalyzerControllerTest {
     }
 
     @Test
-    public void analyzeFile_shouldThrowInvalidFileFormatExceptionException_onInvalidFileFormat() {
+    void analyzeFile_shouldThrowInvalidFileFormatExceptionException_onInvalidFileFormat() {
         AnalyzerController analyzerController = new AnalyzerController(new BoxService());
         String url = "http://demo.castlabs.com/tmp/text0.mp4";
 
@@ -54,7 +54,7 @@ public class AnalyzerControllerTest {
     }
 
     @Test
-    public void analyzeFile_shouldThrowRuntimeJsonMappingException_whenObjectMapperFails() throws JsonProcessingException {
+    void analyzeFile_shouldThrowRuntimeJsonMappingException_whenObjectMapperFails() throws JsonProcessingException {
         BoxService boxService = Mockito.mock(BoxService.class);
         AnalyzerController analyzerController = new AnalyzerController(boxService);
         ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);

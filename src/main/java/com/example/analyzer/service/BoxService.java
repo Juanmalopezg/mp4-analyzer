@@ -13,6 +13,10 @@ import java.util.List;
 public class BoxService {
     public static final int BOX_HEADER_LENGTH = 4;
 
+    public List<Box> processBoxes(ByteBuffer byteBuffer, int length) {
+        return processBox(byteBuffer, 0, length);
+    }
+
     /**
      * Processes the boxes in the given byte buffer starting from the specified offset and up to the given length.
      * Returns a list of boxes with their sub-boxes, if any.
@@ -24,7 +28,7 @@ public class BoxService {
      * @throws InvalidFileFormatException if the file is not compatible with ISO MPEG-4 Part 12 Base Media File Format
      *                                    or the byte buffer is null or if the offset and length exceed the buffer limits
      */
-    public List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) {
+    private List<Box> processBox(ByteBuffer byteBuffer, int offset, int length) {
         List<Box> boxes = new ArrayList<>();
         int end = offset + length;
         while (offset < end) {

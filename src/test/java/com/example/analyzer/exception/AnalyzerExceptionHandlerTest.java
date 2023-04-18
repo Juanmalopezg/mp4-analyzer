@@ -18,7 +18,7 @@ class AnalyzerExceptionHandlerTest {
     }
 
     @Test
-    public void handleInvalidFileFormatExceptionTest() {
+    void handleInvalidFileFormatExceptionTest() {
         Exception ex = new Exception();
         InvalidFileFormatException invalidFileFormatException = new InvalidFileFormatException(ex);
 
@@ -29,7 +29,7 @@ class AnalyzerExceptionHandlerTest {
     }
 
     @Test
-    public void handleJsonMappingExceptionTest() {
+    void handleJsonMappingExceptionTest() {
         RuntimeJsonMappingException ex = new RuntimeJsonMappingException("Test Exception");
 
         ResponseEntity<String> response = handler.handleJsonMappingException(ex);

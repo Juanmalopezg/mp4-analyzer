@@ -27,7 +27,7 @@ public class BoxServiceTest {
         byteBuffer.put("trun".getBytes(StandardCharsets.UTF_8));
         byteBuffer.flip();
 
-        List<Box> boxes = boxService.processBox(byteBuffer, 0, byteBuffer.limit());
+        List<Box> boxes = boxService.processBoxes(byteBuffer, byteBuffer.limit());
         assertEquals(1, boxes.size());
 
         Box box = boxes.get(0);
@@ -45,7 +45,7 @@ public class BoxServiceTest {
         byteBuffer.put("mfhd".getBytes(StandardCharsets.UTF_8));
         byteBuffer.flip();
 
-        List<Box> boxes = boxService.processBox(byteBuffer, 0, byteBuffer.limit());
+        List<Box> boxes = boxService.processBoxes(byteBuffer, byteBuffer.limit());
         assertEquals(1, boxes.size());
 
         Box box1 = boxes.get(0);
