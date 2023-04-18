@@ -94,7 +94,6 @@ public enum BoxType {
      */
     public static final Map<String, BoxType> NESTED_BOX_TYPES = new HashMap<>();
 
-
     static {
         NESTED_BOX_TYPES.put("moof", BoxType.MOOF);
         NESTED_BOX_TYPES.put("moov", BoxType.MOOV);
